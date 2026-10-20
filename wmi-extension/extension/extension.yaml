@@ -1,0 +1,77 @@
+# Dynatrace Extensions 2.0, WMI data source, runs locally inside OneAgent (via the
+# Extension Execution Controller). No scripts, ActiveGate or API token needed.
+#
+# What it does:
+#   Every minute the EEC runs the WQL queries below against the local WMI service
+#   and sends one data point per IIS site to Dynatrace, attached to the host.
+#
+# Why performance counters and not root\WebAdministration:
+#   The WMI data source can only run WQL SELECT queries, it cannot call methods.
+#   Site state in root\WebAdministration is only available through the GetState()
+#   method (what Get-IISSiteStatus.ps1 does), so it is not reachable from here.
+#   Instead we read the W3SVC_WebService performance counters, which expose one
+#   instance per IIS site. ServiceUptime is the signal for "is this site running":
+#   it counts seconds since the site started and is 0 (or the instance is absent)
+#   when the site is stopped.
+name: custom:iis.site.status
+version: 0.0.1
+minDynatraceVersion: "1.236"
+author:
+  name: Benjamin Goulet
+
+wmi:
+  - group: iis
+    interval:
+      minutes: 1
+    subgroups:
+      - subgroup: iis.sites
+        wmiNamespace: root\cimv2
+        # One row per site. _Total is the aggregate row, so exclude it.
+        query: >-
+          SELECT Name, ServiceUptime, CurrentConnections, BytesReceivedPersec,
+          BytesSentPersec, TotalMethodRequestsPersec
+          FROM Win32_PerfFormattedData_W3SVC_WebService
+          WHERE Name <> '_Total'
+        dimensions:
+          - key: iis.site
+            value: column:Name
+        metrics:
+          - key: custom.iis.site.uptime
+            value: column:ServiceUptime
+            type: gauge
+          - key: custom.iis.site.connections
+            value: column:CurrentConnections
+            type: gauge
+          - key: custom.iis.site.bytes_received
+            value: column:BytesReceivedPersec
+            type: gauge
+          - key: custom.iis.site.bytes_sent
+            value: column:BytesSentPersec
+            type: gauge
+          - key: custom.iis.site.requests
+            value: column:TotalMethodRequestsPersec
+            type: gauge
+
+# Display names and units shown in Data Explorer
+metrics:
+  - key: custom.iis.site.uptime
+    metadata:
+      displayName: IIS site uptime
+      description: Seconds since the site started. 0 or missing means the site is stopped.
+      unit: Second
+  - key: custom.iis.site.connections
+    metadata:
+      displayName: IIS site current connections
+      unit: Count
+  - key: custom.iis.site.bytes_received
+    metadata:
+      displayName: IIS site bytes received
+      unit: BytePerSecond
+  - key: custom.iis.site.bytes_sent
+    metadata:
+      displayName: IIS site bytes sent
+      unit: BytePerSecond
+  - key: custom.iis.site.requests
+    metadata:
+      displayName: IIS site requests
+      unit: PerSecond

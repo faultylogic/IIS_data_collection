@@ -1,0 +1,10 @@
+{
+	"enabled": true,
+	"description": "iis_site_status activation (simulation only, not bundled)",
+	"version": "0.0.1",
+	"activationContext": "LOCAL",
+	"pythonLocal": {
+		"includeAppPools": true,
+		"timeoutSeconds": 30
+	}
+}

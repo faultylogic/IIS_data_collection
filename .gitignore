@@ -1,0 +1,10 @@
+# Signing material, never commit
+*.pem
+*.key
+secrets.json
+# Build output
+dist/
+build/
+*.egg-info/
+__pycache__/
+.venv/

@@ -1,0 +1,39 @@
+name: custom:iis-site-status
+version: 0.0.1
+minDynatraceVersion: "1.285"
+author:
+  name: Benjamin Goulet
+
+python:
+  runtime:
+    module: iis_site_status
+    version:
+      min: "3.10"
+
+  # Local only: runs inside OneAgent on the IIS host (no ActiveGate / remote activation)
+  activation:
+    local:
+      path: activationSchema.json
+
+# Display names and units shown in Data Explorer
+metrics:
+  - key: custom.iis.site.up
+    metadata:
+      displayName: IIS site up
+      description: 1 if the site is Started, otherwise 0
+  - key: custom.iis.site.state
+    metadata:
+      displayName: IIS site state
+      description: 0 Starting, 1 Started, 2 Stopping, 3 Stopped, 4 Unknown
+  - key: custom.iis.apppool.up
+    metadata:
+      displayName: IIS app pool up
+      description: 1 if the app pool is Started, otherwise 0
+  - key: custom.iis.apppool.state
+    metadata:
+      displayName: IIS app pool state
+      description: 0 Starting, 1 Started, 2 Stopping, 3 Stopped, 4 Unknown
+  - key: custom.iis.collector.up
+    metadata:
+      displayName: IIS collector up
+      description: 1 if the PowerShell collector ran successfully, 0 if it failed

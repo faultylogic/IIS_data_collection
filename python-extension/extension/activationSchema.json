@@ -1,0 +1,47 @@
+{
+  "types": {
+    "pythonLocal": {
+      "type": "object",
+      "properties": {
+        "includeAppPools": {
+          "displayName": "Include application pools",
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "timeoutSeconds": {
+          "displayName": "PowerShell timeout (seconds)",
+          "type": "integer",
+          "nullable": false,
+          "default": 30,
+          "constraints": [
+            {
+              "type": "RANGE",
+              "minimum": 5,
+              "maximum": 55
+            }
+          ]
+        }
+      }
+    }
+  },
+  "dynatrace": "1",
+  "description": "IIS Site Status configuration",
+  "schemaId": "python-extension.activation",
+  "displayName": "IIS Site Status configuration",
+  "ownerProductManagement": "dynatrace",
+  "ownerDevelopment": "dynatrace",
+  "maturity": "GENERAL_AVAILABILITY",
+  "allowedScopes": [
+    "tenant"
+  ],
+  "multiObject": false,
+  "properties": {
+    "pythonLocal": {
+      "displayName": "Python Local Extension",
+      "type": {
+        "$ref": "#/types/pythonLocal"
+      }
+    }
+  }
+}
