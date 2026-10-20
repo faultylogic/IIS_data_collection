@@ -1,5 +1,7 @@
 # IIS_data_collection
 
+NOTE this has not been tested and used for collaboration
+
 Ways to collect IIS site status from a Windows host and get it into Dynatrace via OneAgent.
 
 | Folder | What it is | Reports |
